@@ -2,6 +2,7 @@ import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/sonner'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -17,6 +18,7 @@ export const Route = createRootRoute({
       storageKey="vite-ui-theme"
     >
       <Outlet />
+      <Toaster />
       <TanstackDevtools
         config={{
           position: 'bottom-left',

@@ -9,6 +9,20 @@ import { Badge } from '@/components/ui/badge';
 import { cn, getStatusColor, getScoreColor } from '@/lib/utils';
 import type { Lead, Opportunity } from '@/types';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+// Schema de validação com Zod
+const leadValidationSchema = z.object({
+    email: z.email('Email deve ter um formato válido'),
+    company: z.string().min(1, 'Empresa é obrigatória'),
+    status: z.enum(['Novo', 'Em contato', 'Qualificado', 'Desqualificado']),
+    source: z.enum(['Web', 'Indicação', 'Feira']),
+    score: z.number().min(0, 'Score deve ser maior que 0').max(100, 'Score deve ser menor que 100')
+});
+
+type ValidationErrors = {
+    [K in keyof z.infer<typeof leadValidationSchema>]?: string;
+};
 
 interface LeadDetailPanelProps {
     lead: Lead | null;
@@ -31,21 +45,41 @@ export default function LeadDetailPanel({
     const [isConverting, setIsConverting] = useState(false);
     const [opportunityAmount, setOpportunityAmount] = useState<number>(0);
     const [opportunityStage, setOpportunityStage] = useState<Opportunity['stage']>('Qualificação');
+    const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
     useEffect(() => {
         if (lead) {
             setEditedLead({ ...lead });
+            setValidationErrors({});
         }
     }, [lead]);
+
+    const validateLead = (leadData: Lead): boolean => {
+        try {
+            leadValidationSchema.parse(leadData);
+            setValidationErrors({});
+            return true;
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const errors: ValidationErrors = {};
+                error.issues.forEach((err) => {
+                    if (err.path.length > 0) {
+                        const field = err.path[0] as keyof ValidationErrors;
+                        errors[field] = err.message;
+                    }
+                });
+                setValidationErrors(errors);
+            }
+            return false;
+        }
+    };
 
     const handleSave = async () => {
         if (!editedLead) return;
 
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(editedLead.email)) {
-            toast('Email inválido', {
-                description: 'Por favor, insira um email válido.'
+        if (!validateLead(editedLead)) {
+            toast('Dados inválidos', {
+                description: 'Por favor, corrija os erros antes de salvar.'
             });
             return;
         }
@@ -61,6 +95,8 @@ export default function LeadDetailPanel({
         toast('Lead atualizado', {
             description: 'As informações do lead foram salvas com sucesso.'
         });
+
+        onClose();
     };
 
     const handleConvert = async () => {
@@ -72,7 +108,7 @@ export default function LeadDetailPanel({
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         const newOpportunity: Opportunity = {
-            id: Date.now(),
+            id: Date.now(), // Simple ID generation for demo
             name: editedLead.name,
             stage: opportunityStage,
             amount: opportunityAmount,
@@ -99,7 +135,6 @@ export default function LeadDetailPanel({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 bg-foreground/50 backdrop-blur-sm z-40"
-
                         onClick={onClose}
                     />
 
@@ -177,10 +212,16 @@ export default function LeadDetailPanel({
                                                     type="email"
                                                     value={editedLead.email}
                                                     onChange={(e) => setEditedLead({ ...editedLead, email: e.target.value })}
-                                                    className="pl-10"
+                                                    className={cn(
+                                                        "pl-10",
+                                                        validationErrors.email && "border-destructive focus:border-destructive"
+                                                    )}
                                                     placeholder="email@empresa.com"
                                                 />
                                             </div>
+                                            {validationErrors.email && (
+                                                <p className="text-sm text-destructive">{validationErrors.email}</p>
+                                            )}
                                         </div>
 
                                         <div className='flex flex-col gap-2'>
@@ -191,7 +232,9 @@ export default function LeadDetailPanel({
                                                     setEditedLead({ ...editedLead, status: value })
                                                 }
                                             >
-                                                <SelectTrigger>
+                                                <SelectTrigger className={cn(
+                                                    validationErrors.status && "border-destructive focus:border-destructive"
+                                                )}>
                                                     <div className="flex items-center space-x-2">
                                                         <Tag className="w-4 h-4 text-muted-foreground" />
                                                         <SelectValue />
@@ -204,6 +247,9 @@ export default function LeadDetailPanel({
                                                     <SelectItem value="Desqualificado">Desqualificado</SelectItem>
                                                 </SelectContent>
                                             </Select>
+                                            {validationErrors.status && (
+                                                <p className="text-sm text-destructive">{validationErrors.status}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
