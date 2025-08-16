@@ -1,5 +1,4 @@
-import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
+import { ThemeSwitch } from "./mode-toggle";
 
 export default function Header() {
     return (
@@ -10,12 +9,7 @@ export default function Header() {
                         <img src="/logo.png" alt="logo" className="h-8" />
                         <h2 className="text-xl font-bold">Seller Console</h2>
                     </div>
-                    <div className="flex items-center">
-                        <Button className="w-full sm:w-auto gap-1">
-                            <Plus className="w-4 h-4" />
-                            <span className="inline">Novo Lead</span>
-                        </Button>
-                    </div>
+                    <ThemeSwitch />
                 </div>
             </div>
         </header>

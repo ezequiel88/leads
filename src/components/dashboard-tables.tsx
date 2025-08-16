@@ -1,6 +1,6 @@
 import { formatCurrency } from "@/lib/utils"
 import { motion } from "framer-motion"
-import { AlertCircle, Building2, Target, Users } from "lucide-react";
+import { AlertCircle, Building2, Plus, Target, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import type { Lead, Opportunity, TableFilters, PaginationState } from "@/types";
@@ -12,15 +12,16 @@ import SearchAndFilters from "./search-filters";
 import LeadsTable from "./leads-table";
 import OpportunitiesTable from "./oportunities-table";
 import LeadDetailPanel from "./lead-detail";
+import { Button } from "./ui/button";
 
 // Ícones condicionais para fontes de leads
 export const getSourceIcon = (source: Lead['source']) => {
-  const icons = {
-    'Web': <AlertCircle className="w-4 h-4" />,
-    'Indicação': <Users className="w-4 h-4" />,
-    'Feira': <Building2 className="w-4 h-4" />
-  };
-  return icons[source];
+    const icons = {
+        'Web': <AlertCircle className="w-4 h-4" />,
+        'Indicação': <Users className="w-4 h-4" />,
+        'Feira': <Building2 className="w-4 h-4" />
+    };
+    return icons[source];
 };
 
 export default function DashboardTables() {
@@ -176,6 +177,11 @@ export default function DashboardTables() {
         }
     };
 
+    const handleNewLead = () => {
+        setSelectedLead(null);
+        setIsPanelOpen(true);
+    };
+
     return (
         <div>
             <motion.div
@@ -184,16 +190,24 @@ export default function DashboardTables() {
                 transition={{ delay: 0.5 }}
             >
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                    <TabsList className="grid w-full max-w-md grid-cols-2 h-10">
-                        <TabsTrigger value="leads" className="flex items-center space-x-2">
-                            <Users className="w-4 h-4" />
-                            <span>Leads</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="opportunities" className="flex items-center space-x-2">
-                            <Target className="w-4 h-4" />
-                            <span>Oportunidades</span>
-                        </TabsTrigger>
-                    </TabsList>
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <TabsList className="grid w-full max-w-md grid-cols-2 h-10">
+                            <TabsTrigger value="leads" className="flex items-center space-x-2">
+                                <Users className="w-4 h-4" />
+                                <span>Leads</span>
+                            </TabsTrigger>
+                            <TabsTrigger value="opportunities" className="flex items-center space-x-2">
+                                <Target className="w-4 h-4" />
+                                <span>Oportunidades</span>
+                            </TabsTrigger>
+                        </TabsList>
+                        
+                        <Button className="w-full sm:w-auto gap-1 h-10" onClick={handleNewLead}>
+                            <Plus className="w-4 h-4" />
+                            <span className="inline">Novo Lead</span>
+                        </Button>
+                    </div>
+
 
                     <TabsContent value="leads" className="space-y-6">
                         <div className="flex items-center justify-between">
