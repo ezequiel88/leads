@@ -3,15 +3,15 @@ export interface Lead {
   name: string;
   company: string;
   email: string;
-  source: 'Web' | 'Indicação' | 'Feira';
+  source: 'Web' | 'Referral' | 'Event';
   score: number;
-  status: 'Novo' | 'Em contato' | 'Qualificado' | 'Desqualificado';
+  status: 'New' | 'Contacted' | 'Qualified' | 'Disqualified';
 }
 
 export interface Opportunity {
   id: number;
   name: string;
-  stage: 'Qualificação' | 'Proposta' | 'Negociação' | 'Fechado' | 'Perdido';
+  stage: 'Qualification' | 'Proposal' | 'Negotiation' | 'Closed' | 'Lost';
   amount: number;
   accountName: string;
 }
@@ -25,7 +25,7 @@ export interface TableFilters {
   sortOrder: SortOrder;
 }
 
-// Novos tipos para paginação
+// New types for pagination
 export interface PaginationState {
   currentPage: number;
   pageSize: number;

@@ -15,32 +15,42 @@ export const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-// Cores condicionais para status de leads
+// Conditional colors for lead status
 export const getStatusColor = (status: Lead['status']) => {
   const colors = {
-    'Novo': 'bg-blue-500/10 text-white border-blue-500/20',
-    'Em contato': 'bg-yellow-500/10 text-white border-yellow-500/20',
-    'Qualificado': 'bg-green-500/10 text-white border-green-500/20',
-    'Desqualificado': 'bg-red-500/10 text-white border-red-500/20'
+    'New': 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+    'Contacted': 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800',
+    'Qualified': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+    'Disqualified': 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
   };
   return colors[status];
 };
 
-// Cores condicionais para scores
+// Conditional colors for scores
 export const getScoreColor = (score: number) => {
-  if (score >= 90) return 'text-success';
-  if (score >= 75) return 'text-warning';
-  return 'text-muted-foreground';
+  if (score >= 90) return 'text-green-600 dark:text-green-400';
+  if (score >= 75) return 'text-yellow-600 dark:text-yellow-400';
+  return 'text-gray-500 dark:text-gray-400';
 };
 
-// Cores condicionais para estágios de oportunidades
+// Conditional icons for lead sources
+export const getSourceIcon = (source: Lead['source']) => {
+  const icons = {
+    'Web': 'Globe',
+    'Referral': 'Users',
+    'Event': 'Building2'
+  };
+  return icons[source];
+};
+
+// Conditional colors for opportunity stages
 export const getStageColor = (stage: Opportunity['stage']) => {
   const colors = {
-    'Qualificação': 'bg-blue-500/40 text-white border-blue-500/60',
-    'Proposta': 'bg-green-500/50 text-white border-green-500/20',
-    'Negociação': 'bg-gray-500/30 text-white border-gray-500/50',
-    'Fechado': 'bg-foreground/40 text-background border-foreground/60',
-    'Perdido': 'bg-destructive/10 text-destructive border-destructive/20'
+    'Qualification': 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+    'Proposal': 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800',
+    'Negotiation': 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800',
+    'Closed': 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+    'Lost': 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
   };
   return colors[stage];
 };
