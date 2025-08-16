@@ -3,7 +3,7 @@ import { DollarSign, Building2, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Pagination from '@/components/ui/pagination';
-import { cn, formatCurrency } from '@/lib/utils';
+import { cn, formatCurrency, getStageColor } from '@/lib/utils';
 import type { Opportunity, PaginationState } from '@/types';
 
 interface OpportunitiesTableProps {
@@ -19,17 +19,6 @@ export default function OpportunitiesTable({
     onPaginationChange,
     isLoading = false
 }: OpportunitiesTableProps) {
-
-    const getStageColor = (stage: Opportunity['stage']) => {
-        const colors = {
-            'Qualificação': 'bg-primary/10 text-primary border-primary/20',
-            'Proposta': 'bg-green-500/50 text-white border-green-500/20',
-            'Negociação': 'bg-green/10 text-success border-green/20',
-            'Fechado': 'bg-success/20 text-success border-success/30',
-            'Perdido': 'bg-destructive/10 text-destructive border-destructive/20'
-        };
-        return colors[stage];
-    };
 
     // Calcular dados paginados
     const startIndex = (pagination.currentPage - 1) * pagination.pageSize;
@@ -121,8 +110,8 @@ export default function OpportunitiesTable({
                         >
                             <TableCell className="px-6 py-4">
                                 <div className="flex items-center space-x-3">
-                                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${getStageColor(opportunity.stage)}`}>
-                                        <span className="text-sm font-medium text-primary-foreground">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getStageColor(opportunity.stage)}`}>
+                                        <span className="text-sm font-medium">
                                             {opportunity.name.charAt(0)}
                                         </span>
                                     </div>

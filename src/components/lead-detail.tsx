@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, getStatusColor, getScoreColor } from '@/lib/utils';
 import type { Lead, Opportunity } from '@/types';
 import { toast } from 'sonner';
 
@@ -89,21 +89,9 @@ export default function LeadDetailPanel({
         onClose();
     };
 
-    const getStatusColor = (status: Lead['status']) => {
-        const colors = {
-            'Novo': 'bg-primary/10 text-primary border-primary/20',
-            'Em contato': 'bg-warning/10 text-warning border-warning/20',
-            'Qualificado': 'bg-success/10 text-success border-success/20',
-            'Desqualificado': 'bg-destructive/10 text-destructive border-destructive/20'
-        };
-        return colors[status];
-    };
-
-    const getScoreColor = (score: number) => {
-        if (score >= 90) return 'text-success';
-        if (score >= 75) return 'text-warning';
-        return 'text-muted-foreground';
-    };
+    // Remove as funções duplicadas:
+    // const getStatusColor = (status: Lead['status']) => { ... };
+    // const getScoreColor = (score: number) => { ... };
 
     return (
         <AnimatePresence>
@@ -131,8 +119,8 @@ export default function LeadDetailPanel({
                             {/* Header */}
                             <div className="flex items-center justify-between p-6 border-b bg-muted/30">
                                 <div className="flex items-center space-x-3">
-                                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                                        <span className="text-sm font-medium text-primary-foreground">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getStatusColor(editedLead.status)}`}>
+                                        <span className="text-sm font-medium">
                                             {editedLead.name.charAt(0)}
                                         </span>
                                     </div>

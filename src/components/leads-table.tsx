@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
-import { Users, Mail, Building2, Trophy, AlertCircle } from 'lucide-react';
+import { Users, Mail, Building2, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Pagination from '@/components/ui/pagination';
-import { cn } from '@/lib/utils';
+import { cn, getStatusColor, getScoreColor } from '@/lib/utils';
 import type { Lead, PaginationState } from '@/types';
+import { getSourceIcon } from './dashboard-tables';
 
 interface LeadsTableProps {
     leads: Lead[];
@@ -24,31 +25,6 @@ export default function LeadsTable({
     isLoading = false
 }: LeadsTableProps) {
 
-    const getStatusColor = (status: Lead['status']) => {
-        const colors = {
-            'Novo': 'bg-primary/10 text-primary border-primary/20',
-            'Em contato': 'bg-warning/10 text-warning border-warning/20',
-            'Qualificado': 'bg-success/10 text-success border-success/20',
-            'Desqualificado': 'bg-destructive/10 text-destructive border-destructive/20'
-        };
-        return colors[status];
-    };
-
-    const getSourceIcon = (source: Lead['source']) => {
-        const icons = {
-            'Web': <AlertCircle className="w-4 h-4" />,
-            'Indicação': <Users className="w-4 h-4" />,
-            'Feira': <Building2 className="w-4 h-4" />
-        };
-        return icons[source];
-    };
-
-    const getScoreColor = (score: number) => {
-        if (score >= 90) return 'text-success';
-        if (score >= 75) return 'text-warning';
-        return 'text-muted-foreground';
-    };
-
     // Calcular dados paginados
     const startIndex = (pagination.currentPage - 1) * pagination.pageSize;
     const endIndex = startIndex + pagination.pageSize;
@@ -66,7 +42,7 @@ export default function LeadsTable({
         onPaginationChange({
             ...pagination,
             pageSize,
-            currentPage: 1 // Reset para primeira página
+            currentPage: 1
         });
     };
 
@@ -149,8 +125,8 @@ export default function LeadsTable({
                         >
                             <TableCell className="px-6 py-4">
                                 <div className="flex items-center space-x-3">
-                                    <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                        <span className="text-sm font-medium text-primary-foreground">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getStatusColor(lead.status)}`}>
+                                        <span className="text-sm font-medium">
                                             {lead.name.charAt(0)}
                                         </span>
                                     </div>
@@ -194,7 +170,7 @@ export default function LeadsTable({
                     ))}
                 </TableBody>
             </Table>
-            
+
             <Pagination
                 currentPage={pagination.currentPage}
                 totalPages={totalPages}
