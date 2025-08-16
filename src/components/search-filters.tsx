@@ -42,19 +42,22 @@ export default function SearchAndFilters({
 
     return (
         <div className="flex flex-col sm:flex-row gap-4 p-6 bg-card border rounded-lg shadow-soft">
-            <div className="flex-1">
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Buscar por nome ou empresa..."
-                        value={filters.search}
-                        onChange={handleSearchChange}
-                        className="pl-10 pr-4"
-                    />
-                </div>
+            <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                    placeholder="Buscar por nome ou empresa..."
+                    value={filters.search}
+                    onChange={handleSearchChange}
+                    className="pl-10 pr-4 w-full md:w-96"
+                />
             </div>
+            
+            <div className="flex-1"/>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex items-center text-muted-foreground">
+                    <span className="font-medium text-foreground">{leadCount}</span>&nbsp;leads
+                </div>
                 <Select value={filters.status || 'all'} onValueChange={handleStatusChange}>
                     <SelectTrigger className="w-full sm:w-[160px]">
                         <div className="flex items-center space-x-2">
@@ -71,7 +74,7 @@ export default function SearchAndFilters({
                     </SelectContent>
                 </Select>
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                     <Button
                         variant={filters.sortBy === 'score' ? 'default' : 'outline'}
                         size="sm"
@@ -100,10 +103,6 @@ export default function SearchAndFilters({
                         <span>Nome</span>
                     </Button>
                 </div>
-            </div>
-
-            <div className="flex items-center text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{leadCount}</span>&nbsp;leads
             </div>
         </div>
     );

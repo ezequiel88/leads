@@ -7,8 +7,8 @@ export default function Header() {
             <div className="container mx-auto px-4 py-2">
                 <div className="flex justify-between items-center py-4">
                     <div className="flex items-center gap-4">
-                        <img src="/logo.png" alt="logo" className="h-10" />
-                        <h2 className="text-2xl font-bold">Leads Management</h2>
+                        <img src="/logo.png" alt="logo" className="h-8" />
+                        <h2 className="text-xl font-bold">Seller Console</h2>
                     </div>
                     <div className="flex items-center">
                         <Button className="w-full sm:w-auto gap-1">

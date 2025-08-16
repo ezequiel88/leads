@@ -72,7 +72,7 @@ export default function LeadDetailPanel({
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         const newOpportunity: Opportunity = {
-            id: Date.now(), // Simple ID generation for demo
+            id: Date.now(),
             name: editedLead.name,
             stage: opportunityStage,
             amount: opportunityAmount,
@@ -88,10 +88,6 @@ export default function LeadDetailPanel({
 
         onClose();
     };
-
-    // Remove as funções duplicadas:
-    // const getStatusColor = (status: Lead['status']) => { ... };
-    // const getScoreColor = (score: number) => { ... };
 
     return (
         <AnimatePresence>
