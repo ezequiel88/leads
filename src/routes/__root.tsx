@@ -18,7 +18,10 @@ export const Route = createRootRoute({
       storageKey="vite-ui-theme"
     >
       <Outlet />
-      <Toaster />
+      <Toaster
+        position="top-center"
+        duration={4000}
+      />
       <TanstackDevtools
         config={{
           position: 'bottom-left',
