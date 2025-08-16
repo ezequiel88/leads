@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 import { Target, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import type { Lead, Opportunity, TableFilters } from "@/types";
+import type { Lead, Opportunity, TableFilters, PaginationState } from "@/types";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 import leadsData from '@/@data/leads.json';
@@ -22,8 +22,21 @@ export default function DashboardTables() {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Estados de paginação
+    const [leadsPagination, setLeadsPagination] = useState<PaginationState>({
+        currentPage: 1,
+        pageSize: 10,
+        totalItems: 0
+    });
+
+    const [opportunitiesPagination, setOpportunitiesPagination] = useState<PaginationState>({
+        currentPage: 1,
+        pageSize: 10,
+        totalItems: 0
+    });
+
     // Filters state with localStorage persistence
-    const [filters, setFilters] = useLocalStorage<TableFilters>('leadFilters', {
+    const [filters, setFilters] = useLocalStorage<TableFilters>('table-filters', {
         search: '',
         status: '',
         sortBy: 'score',
@@ -51,7 +64,8 @@ export default function DashboardTables() {
             const searchTerm = filters.search.toLowerCase();
             filtered = filtered.filter(lead =>
                 lead.name.toLowerCase().includes(searchTerm) ||
-                lead.company.toLowerCase().includes(searchTerm)
+                lead.company.toLowerCase().includes(searchTerm) ||
+                lead.email.toLowerCase().includes(searchTerm)
             );
         }
 
@@ -66,10 +80,6 @@ export default function DashboardTables() {
             let bValue: string | number;
 
             switch (filters.sortBy) {
-                case 'score':
-                    aValue = a.score;
-                    bValue = b.score;
-                    break;
                 case 'name':
                     aValue = a.name.toLowerCase();
                     bValue = b.name.toLowerCase();
@@ -78,8 +88,11 @@ export default function DashboardTables() {
                     aValue = a.company.toLowerCase();
                     bValue = b.company.toLowerCase();
                     break;
+                case 'score':
                 default:
-                    return 0;
+                    aValue = a.score;
+                    bValue = b.score;
+                    break;
             }
 
             if (filters.sortOrder === 'asc') {
@@ -91,6 +104,23 @@ export default function DashboardTables() {
 
         return filtered;
     }, [leads, filters]);
+
+    // Atualizar total de itens quando os dados filtrados mudarem
+    useEffect(() => {
+        setLeadsPagination(prev => ({
+            ...prev,
+            totalItems: filteredLeads.length,
+            currentPage: 1 // Reset para primeira página quando filtros mudarem
+        }));
+    }, [filteredLeads]);
+
+    useEffect(() => {
+        setOpportunitiesPagination(prev => ({
+            ...prev,
+            totalItems: opportunities.length,
+            currentPage: 1
+        }));
+    }, [opportunities]);
 
     // Stats calculations
     const stats = useMemo(() => {
@@ -156,15 +186,21 @@ export default function DashboardTables() {
                     </TabsList>
 
                     <TabsContent value="leads" className="space-y-6">
-                        <SearchAndFilters
-                            filters={filters}
-                            onFiltersChange={setFilters}
-                            leadCount={leads.length}
-                        />
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-semibold">Leads</h3>
+                                <p className="text-muted-foreground">
+                                    {filteredLeads.length} leads • {stats.qualifiedLeads} qualificados
+                                </p>
+                            </div>
+                        </div>
+                        <SearchAndFilters filters={filters} onFiltersChange={setFilters} leadCount={filteredLeads.length} />
                         <LeadsTable
                             leads={filteredLeads}
                             selectedLead={selectedLead}
                             onLeadSelect={handleLeadSelect}
+                            pagination={leadsPagination}
+                            onPaginationChange={setLeadsPagination}
                             isLoading={isLoading}
                         />
                     </TabsContent>
@@ -180,6 +216,8 @@ export default function DashboardTables() {
                         </div>
                         <OpportunitiesTable
                             opportunities={opportunities}
+                            pagination={opportunitiesPagination}
+                            onPaginationChange={setOpportunitiesPagination}
                             isLoading={isLoading}
                         />
                     </TabsContent>
@@ -193,7 +231,6 @@ export default function DashboardTables() {
                 onSave={handleLeadSave}
                 onConvertToOpportunity={handleConvertToOpportunity}
             />
-
         </div>
-    )
+    );
 }

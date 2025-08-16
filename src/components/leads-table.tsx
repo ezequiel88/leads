@@ -1,13 +1,17 @@
 import { motion } from 'framer-motion';
 import { Users, Mail, Building2, Trophy, AlertCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Pagination from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
-import type { Lead } from '@/types';
+import type { Lead, PaginationState } from '@/types';
 
 interface LeadsTableProps {
     leads: Lead[];
     selectedLead: Lead | null;
     onLeadSelect: (lead: Lead) => void;
+    pagination: PaginationState;
+    onPaginationChange: (pagination: PaginationState) => void;
     isLoading?: boolean;
 }
 
@@ -15,6 +19,8 @@ export default function LeadsTable({
     leads,
     selectedLead,
     onLeadSelect,
+    pagination,
+    onPaginationChange,
     isLoading = false
 }: LeadsTableProps) {
 
@@ -43,47 +49,54 @@ export default function LeadsTable({
         return 'text-muted-foreground';
     };
 
+    // Calcular dados paginados
+    const startIndex = (pagination.currentPage - 1) * pagination.pageSize;
+    const endIndex = startIndex + pagination.pageSize;
+    const paginatedLeads = leads.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(leads.length / pagination.pageSize);
+
+    const handlePageChange = (page: number) => {
+        onPaginationChange({
+            ...pagination,
+            currentPage: page
+        });
+    };
+
+    const handlePageSizeChange = (pageSize: number) => {
+        onPaginationChange({
+            ...pagination,
+            pageSize,
+            currentPage: 1 // Reset para primeira página
+        });
+    };
+
     if (isLoading) {
         return (
             <div className="rounded-lg border bg-card shadow-soft">
-                <div className="overflow-hidden">
-                    <table className="w-full">
-                        <thead className="bg-muted/50">
-                            <tr>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">Lead</th>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">Empresa</th>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">Email</th>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">Fonte</th>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">Score</th>
-                                <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {[...Array(5)].map((_, i) => (
-                                <tr key={i} className="border-t">
-                                    <td className="px-6 py-4">
-                                        <div className="h-4 bg-muted animate-pulse rounded"></div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="h-4 bg-muted animate-pulse rounded"></div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="h-4 bg-muted animate-pulse rounded"></div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="h-4 bg-muted animate-pulse rounded"></div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="h-4 bg-muted animate-pulse rounded"></div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="h-6 bg-muted animate-pulse rounded-full"></div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Lead</TableHead>
+                            <TableHead>Empresa</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Fonte</TableHead>
+                            <TableHead>Score</TableHead>
+                            <TableHead>Status</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {[...Array(5)].map((_, i) => (
+                            <TableRow key={i}>
+                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-6 bg-muted animate-pulse rounded-full"></div></TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
         );
     }
@@ -105,96 +118,91 @@ export default function LeadsTable({
     }
 
     return (
-        <div className="rounded-lg border bg-card shadow-soft overflow-hidden">
-            <div className="overflow-x-auto">
-                <table className="w-full">
-                    <thead className="bg-muted/50 sticky top-0 z-10">
-                        <tr>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
-                                Lead
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
-                                Empresa
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
-                                Email
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
-                                Fonte
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
-                                Score
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-muted-foreground">
-                                Status
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {leads.map((lead, index) => (
-                            <motion.tr
-                                key={lead.id}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{
-                                    duration: 0.3,
-                                    delay: Math.min(index * 0.02, 0.3),
-                                    ease: [0.25, 0.46, 0.45, 0.94]
-                                }}
-                                className={cn(
-                                    'table-row-hover cursor-pointer border-t',
-                                    selectedLead?.id === lead.id && 'bg-accent/50'
-                                )}
-                                onClick={() => onLeadSelect(lead)}
-                            >
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
-                                            <span className="text-sm font-medium text-primary-foreground">
-                                                {lead.name.charAt(0)}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <div className="text-sm font-medium text-foreground">{lead.name}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-2">
-                                        <Building2 className="w-4 h-4 text-muted-foreground" />
-                                        <span className="text-sm text-foreground">{lead.company}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-2">
-                                        <Mail className="w-4 h-4 text-muted-foreground" />
-                                        <span className="text-sm text-muted-foreground">{lead.email}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-2">
-                                        {getSourceIcon(lead.source)}
-                                        <span className="text-sm text-foreground">{lead.source}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center space-x-2">
-                                        <Trophy className="w-4 h-4 text-muted-foreground" />
-                                        <span className={cn('text-sm font-medium', getScoreColor(lead.score))}>
-                                            {lead.score}
+        <div className="rounded-lg border bg-card shadow-soft">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="px-6 py-4">Lead</TableHead>
+                        <TableHead className="px-6 py-4">Empresa</TableHead>
+                        <TableHead className="px-6 py-4">Email</TableHead>
+                        <TableHead className="px-6 py-4">Fonte</TableHead>
+                        <TableHead className="px-6 py-4">Score</TableHead>
+                        <TableHead className="px-6 py-4">Status</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {paginatedLeads.map((lead, index) => (
+                        <motion.tr
+                            key={lead.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{
+                                duration: 0.3,
+                                delay: Math.min(index * 0.02, 0.3),
+                                ease: [0.25, 0.46, 0.45, 0.94]
+                            }}
+                            className={cn(
+                                'cursor-pointer hover:bg-muted/50 transition-colors',
+                                selectedLead?.id === lead.id && 'bg-accent/50'
+                            )}
+                            onClick={() => onLeadSelect(lead)}
+                        >
+                            <TableCell className="px-6 py-4">
+                                <div className="flex items-center space-x-3">
+                                    <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                        <span className="text-sm font-medium text-primary-foreground">
+                                            {lead.name.charAt(0)}
                                         </span>
                                     </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <Badge className={cn('border', getStatusColor(lead.status))}>
-                                        {lead.status}
-                                    </Badge>
-                                </td>
-                            </motion.tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                                    <div>
+                                        <div className="text-sm font-medium text-foreground">{lead.name}</div>
+                                    </div>
+                                </div>
+                            </TableCell>
+                            <TableCell className="px-6 py-4">
+                                <div className="flex items-center space-x-2">
+                                    <Building2 className="w-4 h-4 text-muted-foreground" />
+                                    <span className="text-sm text-foreground">{lead.company}</span>
+                                </div>
+                            </TableCell>
+                            <TableCell className="px-6 py-4">
+                                <div className="flex items-center space-x-2">
+                                    <Mail className="w-4 h-4 text-muted-foreground" />
+                                    <span className="text-sm text-muted-foreground">{lead.email}</span>
+                                </div>
+                            </TableCell>
+                            <TableCell className="px-6 py-4">
+                                <div className="flex items-center space-x-2">
+                                    {getSourceIcon(lead.source)}
+                                    <span className="text-sm text-foreground">{lead.source}</span>
+                                </div>
+                            </TableCell>
+                            <TableCell className="px-6 py-4">
+                                <div className="flex items-center space-x-2">
+                                    <Trophy className="w-4 h-4 text-muted-foreground" />
+                                    <span className={cn('text-sm font-medium', getScoreColor(lead.score))}>
+                                        {lead.score}
+                                    </span>
+                                </div>
+                            </TableCell>
+                            <TableCell className="px-6 py-4">
+                                <Badge className={cn('border', getStatusColor(lead.status))}>
+                                    {lead.status}
+                                </Badge>
+                            </TableCell>
+                        </motion.tr>
+                    ))}
+                </TableBody>
+            </Table>
+            
+            <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={totalPages}
+                pageSize={pagination.pageSize}
+                totalItems={leads.length}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+            />
         </div>
     );
 }
