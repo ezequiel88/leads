@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 
 export default function Header() {
     return (
-        <header className="bg-card/50 backdrop-blur-sm sticky top-0 z-30 shadow-lg">
+        <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-30 shadow-lg">
             <div className="container mx-auto px-4 py-2">
                 <div className="flex justify-between items-center py-4">
                     <div className="flex items-center gap-4">

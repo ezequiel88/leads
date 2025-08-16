@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import Header from '@/components/header'
 import DashboardCards from '@/components/dashboard-cards'
+import DashboardTables from '@/components/dashboard-tables'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -12,6 +13,7 @@ function App() {
       <Header />
       <main className="container mx-auto px-4 py-8">
         <DashboardCards />
+        <DashboardTables />
       </main>
     </div>
   )

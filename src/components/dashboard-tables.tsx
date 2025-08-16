@@ -8,6 +8,10 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 import leadsData from '@/@data/leads.json';
 import opportunitiesData from '@/@data/oportunities.json';
+import SearchAndFilters from "./search-filters";
+import LeadsTable from "./leads-table";
+import OpportunitiesTable from "./oportunities-table";
+import LeadDetailPanel from "./lead-detail";
 
 export default function DashboardTables() {
 
@@ -133,41 +137,63 @@ export default function DashboardTables() {
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-        >
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full max-w-md grid-cols-2">
-                    <TabsTrigger value="leads" className="flex items-center space-x-2">
-                        <Users className="w-4 h-4" />
-                        <span>Leads</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="opportunities" className="flex items-center space-x-2">
-                        <Target className="w-4 h-4" />
-                        <span>Oportunidades</span>
-                    </TabsTrigger>
-                </TabsList>
+        <div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+            >
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                    <TabsList className="grid w-full max-w-md grid-cols-2">
+                        <TabsTrigger value="leads" className="flex items-center space-x-2">
+                            <Users className="w-4 h-4" />
+                            <span>Leads</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="opportunities" className="flex items-center space-x-2">
+                            <Target className="w-4 h-4" />
+                            <span>Oportunidades</span>
+                        </TabsTrigger>
+                    </TabsList>
 
-                <TabsContent value="leads" className="space-y-6">
+                    <TabsContent value="leads" className="space-y-6">
+                        <SearchAndFilters
+                            filters={filters}
+                            onFiltersChange={setFilters}
+                            leadCount={leads.length}
+                        />
+                        <LeadsTable
+                            leads={filteredLeads}
+                            selectedLead={selectedLead}
+                            onLeadSelect={handleLeadSelect}
+                            isLoading={isLoading}
+                        />
+                    </TabsContent>
 
-
-                </TabsContent>
-
-                <TabsContent value="opportunities" className="space-y-6">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h3 className="text-lg font-semibold">Pipeline de Oportunidades</h3>
-                            <p className="text-muted-foreground">
-                                {opportunities.length} oportunidades • {formatCurrency(stats.totalOpportunityValue)} total
-                            </p>
+                    <TabsContent value="opportunities" className="space-y-6">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-semibold">Pipeline de Oportunidades</h3>
+                                <p className="text-muted-foreground">
+                                    {opportunities.length} oportunidades • {formatCurrency(stats.totalOpportunityValue)} total
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                        <OpportunitiesTable
+                            opportunities={opportunities}
+                            isLoading={isLoading}
+                        />
+                    </TabsContent>
+                </Tabs>
+            </motion.div>
 
+            <LeadDetailPanel
+                lead={selectedLead}
+                isOpen={isPanelOpen}
+                onClose={() => setIsPanelOpen(false)}
+                onSave={handleLeadSave}
+                onConvertToOpportunity={handleConvertToOpportunity}
+            />
 
-                </TabsContent>
-            </Tabs>
-        </motion.div>
+        </div>
     )
 }
