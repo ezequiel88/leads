@@ -1,0 +1,173 @@
+import { formatCurrency } from "@/lib/utils"
+import { motion } from "framer-motion"
+import { Target, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import type { Lead, Opportunity, TableFilters } from "@/types";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+
+import leadsData from '@/@data/leads.json';
+import opportunitiesData from '@/@data/oportunities.json';
+
+export default function DashboardTables() {
+
+    const [leads, setLeads] = useState<Lead[]>([]);
+    const [opportunities, setOpportunities] = useLocalStorage<Opportunity[]>('opportunities', opportunitiesData as Opportunity[]);
+    const [activeTab, setActiveTab] = useState('leads');
+    const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Filters state with localStorage persistence
+    const [filters, setFilters] = useLocalStorage<TableFilters>('leadFilters', {
+        search: '',
+        status: '',
+        sortBy: 'score',
+        sortOrder: 'desc'
+    });
+
+    // Simulate initial data loading
+    useEffect(() => {
+        const loadData = async () => {
+            setIsLoading(true);
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            setLeads(leadsData as Lead[]);
+            setIsLoading(false);
+        };
+
+        loadData();
+    }, []);
+
+    // Filter and sort leads
+    const filteredLeads = useMemo(() => {
+        let filtered = [...leads];
+
+        // Search filter
+        if (filters.search) {
+            const searchTerm = filters.search.toLowerCase();
+            filtered = filtered.filter(lead =>
+                lead.name.toLowerCase().includes(searchTerm) ||
+                lead.company.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        // Status filter
+        if (filters.status) {
+            filtered = filtered.filter(lead => lead.status === filters.status);
+        }
+
+        // Sort
+        filtered.sort((a, b) => {
+            let aValue: string | number;
+            let bValue: string | number;
+
+            switch (filters.sortBy) {
+                case 'score':
+                    aValue = a.score;
+                    bValue = b.score;
+                    break;
+                case 'name':
+                    aValue = a.name.toLowerCase();
+                    bValue = b.name.toLowerCase();
+                    break;
+                case 'company':
+                    aValue = a.company.toLowerCase();
+                    bValue = b.company.toLowerCase();
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (filters.sortOrder === 'asc') {
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+            } else {
+                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+            }
+        });
+
+        return filtered;
+    }, [leads, filters]);
+
+    // Stats calculations
+    const stats = useMemo(() => {
+        const totalLeads = leads.length;
+        const qualifiedLeads = leads.filter(lead => lead.status === 'Qualificado').length;
+        const totalOpportunities = opportunities.length;
+        const totalOpportunityValue = opportunities.reduce((sum, opp) => sum + opp.amount, 0);
+        const averageLeadScore = leads.length > 0
+            ? Math.round(leads.reduce((sum, lead) => sum + lead.score, 0) / leads.length)
+            : 0;
+
+        return {
+            totalLeads,
+            qualifiedLeads,
+            totalOpportunities,
+            totalOpportunityValue,
+            averageLeadScore,
+            conversionRate: totalLeads > 0 ? Math.round((qualifiedLeads / totalLeads) * 100) : 0
+        };
+    }, [leads, opportunities]);
+
+    const handleLeadSelect = (lead: Lead) => {
+        setSelectedLead(lead);
+        setIsPanelOpen(true);
+    };
+
+    const handleLeadSave = (updatedLead: Lead) => {
+        setLeads(prev => prev.map(lead =>
+            lead.id === updatedLead.id ? updatedLead : lead
+        ));
+        setSelectedLead(updatedLead);
+    };
+
+    const handleConvertToOpportunity = (opportunity: Opportunity) => {
+        setOpportunities(prev => [...prev, opportunity]);
+
+        // Update lead status to indicate conversion
+        if (selectedLead) {
+            const updatedLead = { ...selectedLead, status: 'Qualificado' as Lead['status'] };
+            setLeads(prev => prev.map(lead =>
+                lead.id === updatedLead.id ? updatedLead : lead
+            ));
+        }
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+        >
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+                <TabsList className="grid w-full max-w-md grid-cols-2">
+                    <TabsTrigger value="leads" className="flex items-center space-x-2">
+                        <Users className="w-4 h-4" />
+                        <span>Leads</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="opportunities" className="flex items-center space-x-2">
+                        <Target className="w-4 h-4" />
+                        <span>Oportunidades</span>
+                    </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="leads" className="space-y-6">
+
+
+                </TabsContent>
+
+                <TabsContent value="opportunities" className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-lg font-semibold">Pipeline de Oportunidades</h3>
+                            <p className="text-muted-foreground">
+                                {opportunities.length} oportunidades • {formatCurrency(stats.totalOpportunityValue)} total
+                            </p>
+                        </div>
+                    </div>
+
+
+                </TabsContent>
+            </Tabs>
+        </motion.div>
+    )
+}
