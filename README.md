@@ -109,7 +109,7 @@ src/
 ├── routes/            # TanStack Router routes
 ├── types/             # TypeScript type definitions
 └── styles.css         # Global styles
-
+```
 
 ## 🎨 Features Deep Dive
 
