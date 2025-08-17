@@ -149,20 +149,33 @@ No backend means faster development and easier demo deployment. Plus, it simulat
 ✅ **Leads List**: Load from local JSON with all required fields
 
 ✅ **Search & Filter**: Name/company search, status filter, score sorting
+ 
 ✅ **Lead Detail Panel**: Slide-over with inline editing
+
 ✅ **Email Validation**: Proper email format validation
+
 ✅ **Save/Cancel Actions**: With error handling
+
 ✅ **Convert to Opportunity**: One-click conversion with proper data mapping
+
 ✅ **Opportunities Table**: Clean display of converted opportunities
+
 ✅ **Loading States**: Skeleton loading and smooth transitions
+
 ✅ **Empty States**: Friendly no-data messages
+
 ✅ **Error Handling**: Basic error states throughout
+
 ✅ **Performance**: Handles 100+ leads smoothly
+
 
 **Nice-to-Haves Implemented:**
 ✅ **localStorage Persistence**: Filters and sort preferences saved
+
 ✅ **Optimistic Updates**: Immediate UI updates with rollback
+
 ✅ **Responsive Layout**: Desktop to mobile responsive design
+
 
 ## 🤝 Contributing
 
