@@ -13,7 +13,6 @@ import { cn, getStatusColor, getScoreColor } from '@/lib/utils';
 import type { Lead, Opportunity } from '@/types';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { Separator } from '@radix-ui/react-select';
 
 // Validation schema with Zod
 const leadFormSchema = z.object({
@@ -228,7 +227,7 @@ export default function LeadDetailPanel({
                                     className="w-full"
                                     variant="default"
                                 >
-                                    <ArrowRight className="w-4 h-4 mr-2" />
+                                    <ArrowRight className="w-4 h-4" />
                                     Convert Lead
                                 </Button>
                             </div>
@@ -243,12 +242,12 @@ export default function LeadDetailPanel({
                                 <Button type="submit" disabled={isSubmitting} className="flex-1">
                                     {isSubmitting ? (
                                         <>
-                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            <Loader2 className="w-4 h-4 animate-spin" />
                                             <span>Saving...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Save className="w-4 h-4 mr-2" />
+                                            <Save className="w-4 h-4" />
                                             <span>Save</span>
                                         </>
                                     )}

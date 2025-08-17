@@ -45,7 +45,7 @@ export default function SearchAndFilters({
             <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                    placeholder="Buscar por nome ou empresa..."
+                    placeholder="Search by email, name or company..."
                     value={filters.search}
                     onChange={handleSearchChange}
                     className="pl-10 pr-4 w-full md:w-96"
@@ -100,7 +100,7 @@ export default function SearchAndFilters({
                         ) : (
                             <SortAsc className="w-4 h-4" />
                         )}
-                        <span>Nome</span>
+                        <span>Name</span>
                     </Button>
                 </div>
             </div>

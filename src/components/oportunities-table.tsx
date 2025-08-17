@@ -47,19 +47,19 @@ export default function OpportunitiesTable({
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Oportunidade</TableHead>
-                            <TableHead>Conta</TableHead>
-                            <TableHead>Estágio</TableHead>
-                            <TableHead>Valor</TableHead>
+                            <TableHead>Opportunity</TableHead>
+                            <TableHead>Account</TableHead>
+                            <TableHead>Stage</TableHead>
+                            <TableHead>Value</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {[...Array(3)].map((_, i) => (
                             <TableRow key={i}>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-6 bg-muted animate-pulse rounded-full"></div></TableCell>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -75,9 +75,9 @@ export default function OpportunitiesTable({
                     <div className="rounded-full bg-muted/20 p-4 mb-4">
                         <Target className="w-8 h-8 text-muted-foreground" />
                     </div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">Nenhuma oportunidade</h3>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No opportunities found</h3>
                     <p className="text-muted-foreground text-center max-w-sm">
-                        Comece convertendo leads qualificados em oportunidades de negócio.
+                        Create a new opportunity to start tracking your business.
                     </p>
                 </div>
             </div>
@@ -89,10 +89,10 @@ export default function OpportunitiesTable({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="px-6 py-4">Oportunidade</TableHead>
-                        <TableHead className="px-6 py-4">Conta</TableHead>
-                        <TableHead className="px-6 py-4">Estágio</TableHead>
-                        <TableHead className="px-6 py-4">Valor</TableHead>
+                        <TableHead className="px-6 py-4">Opportunity</TableHead>
+                        <TableHead className="px-6 py-4">Account</TableHead>
+                        <TableHead className="px-6 py-4">Stage</TableHead>
+                        <TableHead className="px-6 py-4">Value</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -135,7 +135,8 @@ export default function OpportunitiesTable({
                                 <div className="flex items-center space-x-2">
                                     <DollarSign className="w-4 h-4 text-success" />
                                     <span className="text-sm font-medium text-success">
-                                        {formatCurrency(opportunity.amount)}
+                                        {formatCurrency(opportunity.amount || 0)}
+
                                     </span>
                                 </div>
                             </TableCell>
@@ -143,7 +144,7 @@ export default function OpportunitiesTable({
                     ))}
                 </TableBody>
             </Table>
-            
+
             <Pagination
                 currentPage={pagination.currentPage}
                 totalPages={totalPages}

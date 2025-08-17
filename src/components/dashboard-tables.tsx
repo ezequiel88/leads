@@ -1,6 +1,6 @@
 import { formatCurrency } from "@/lib/utils"
 import { motion } from "framer-motion"
-import { Plus, Target, Users } from "lucide-react";
+import { Target, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import type { Lead, Opportunity, TableFilters, PaginationState } from "@/types";
@@ -12,7 +12,6 @@ import SearchAndFilters from "./search-filters";
 import LeadsTable from "./leads-table";
 import OpportunitiesTable from "./oportunities-table";
 import LeadDetailPanel from "./lead-detail";
-import { Button } from "./ui/button";
 
 export default function DashboardTables() {
 
@@ -59,13 +58,14 @@ export default function DashboardTables() {
     // Filter and sort leads
     const filteredLeads = useMemo(() => {
         let filtered = [...leads];
-
-        // Search filter - only name and company as per requirements
+        
+        // Search filter - name, email and company
         if (filters.search) {
             const searchTerm = filters.search.toLowerCase();
             filtered = filtered.filter(lead =>
                 lead.name.toLowerCase().includes(searchTerm) ||
-                lead.company.toLowerCase().includes(searchTerm)
+                lead.company.toLowerCase().includes(searchTerm) ||
+                lead.email.toLowerCase().includes(searchTerm)
             );
         }
 
@@ -83,10 +83,6 @@ export default function DashboardTables() {
                 case 'name':
                     aValue = a.name.toLowerCase();
                     bValue = b.name.toLowerCase();
-                    break;
-                case 'company':
-                    aValue = a.company.toLowerCase();
-                    bValue = b.company.toLowerCase();
                     break;
                 case 'score':
                 default:
@@ -170,11 +166,6 @@ export default function DashboardTables() {
         }
     };
 
-    const handleNewLead = () => {
-        setSelectedLead(null);
-        setIsPanelOpen(true);
-    };
-
     return (
         <div>
             <motion.div
@@ -183,30 +174,23 @@ export default function DashboardTables() {
                 transition={{ delay: 0.5 }}
             >
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <TabsList className="grid w-full max-w-md grid-cols-2 h-10">
-                            <TabsTrigger value="leads" className="flex items-center space-x-2">
-                                <Users className="w-4 h-4" />
-                                <span>Leads</span>
-                            </TabsTrigger>
-                            <TabsTrigger value="opportunities" className="flex items-center space-x-2">
-                                <Target className="w-4 h-4" />
-                                <span>Oportunidades</span>
-                            </TabsTrigger>
-                        </TabsList>
-
-                        <Button className="w-full sm:w-auto gap-1 h-10" onClick={handleNewLead}>
-                            <Plus className="w-4 h-4" />
-                            <span className="inline">Novo Lead</span>
-                        </Button>
-                    </div>
+                    <TabsList className="grid w-full max-w-md grid-cols-2 h-10">
+                        <TabsTrigger value="leads" className="flex items-center space-x-2">
+                            <Users className="w-4 h-4" />
+                            <span>Leads</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="opportunities" className="flex items-center space-x-2">
+                            <Target className="w-4 h-4" />
+                            <span>Oportunities</span>
+                        </TabsTrigger>
+                    </TabsList>
 
                     <TabsContent value="leads" className="space-y-6">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="text-lg font-semibold">Leads</h3>
                                 <p className="text-muted-foreground">
-                                    {filteredLeads.length} leads • {stats.qualifiedLeads} qualificados
+                                    {filteredLeads.length} leads • {stats.qualifiedLeads} qualified
                                 </p>
                             </div>
                         </div>
@@ -224,9 +208,9 @@ export default function DashboardTables() {
                     <TabsContent value="opportunities" className="space-y-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-lg font-semibold">Pipeline de Oportunidades</h3>
+                                <h3 className="text-lg font-semibold">Opportunities</h3>
                                 <p className="text-muted-foreground">
-                                    {opportunities.length} oportunidades • {formatCurrency(stats.totalOpportunityValue)} total
+                                    {opportunities.length} opportunities • {formatCurrency(stats.totalOpportunityValue)} total
                                 </p>
                             </div>
                         </div>
