@@ -147,6 +147,7 @@ No backend means faster development and easier demo deployment. Plus, it simulat
 ## 🎯 Challenge Requirements Met
 
 ✅ **Leads List**: Load from local JSON with all required fields
+
 ✅ **Search & Filter**: Name/company search, status filter, score sorting
 ✅ **Lead Detail Panel**: Slide-over with inline editing
 ✅ **Email Validation**: Proper email format validation
