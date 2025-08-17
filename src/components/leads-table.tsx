@@ -3,9 +3,8 @@ import { Users, Mail, Building2, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Pagination from '@/components/ui/pagination';
-import { cn, getStatusColor, getScoreColor } from '@/lib/utils';
+import { cn, getStatusColor, getScoreColor, getSourceIcon } from '@/lib/utils';
 import type { Lead, PaginationState } from '@/types';
-import { getSourceIcon } from './dashboard-tables';
 
 interface LeadsTableProps {
     leads: Lead[];
@@ -63,12 +62,12 @@ export default function LeadsTable({
                     <TableBody>
                         {[...Array(5)].map((_, i) => (
                             <TableRow key={i}>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-4 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-6 bg-muted animate-pulse rounded-full"></div></TableCell>
+                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
+                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

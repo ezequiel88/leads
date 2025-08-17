@@ -66,11 +66,11 @@ export default function SearchAndFilters({
                         </div>
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">Todos os status</SelectItem>
-                        <SelectItem value="Novo">Novo</SelectItem>
-                        <SelectItem value="Em contato">Em contato</SelectItem>
-                        <SelectItem value="Qualificado">Qualificado</SelectItem>
-                        <SelectItem value="Desqualificado">Desqualificado</SelectItem>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="New">New</SelectItem>
+                        <SelectItem value="Contacted">Contacted</SelectItem>
+                        <SelectItem value="Qualified">Qualified</SelectItem>
+                        <SelectItem value="Disqualified">Disqualified</SelectItem>
                     </SelectContent>
                 </Select>
 

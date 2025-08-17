@@ -12,7 +12,7 @@ export interface Opportunity {
   id: number;
   name: string;
   stage: 'Qualification' | 'Proposal' | 'Negotiation' | 'Closed' | 'Lost';
-  amount: number;
+  amount?: number; // Made optional as specified
   accountName: string;
 }
 

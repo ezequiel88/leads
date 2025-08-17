@@ -1,6 +1,6 @@
 import { formatCurrency } from "@/lib/utils"
 import { motion } from "framer-motion"
-import { AlertCircle, Building2, Plus, Target, Users } from "lucide-react";
+import { Plus, Target, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import type { Lead, Opportunity, TableFilters, PaginationState } from "@/types";
@@ -13,16 +13,6 @@ import LeadsTable from "./leads-table";
 import OpportunitiesTable from "./oportunities-table";
 import LeadDetailPanel from "./lead-detail";
 import { Button } from "./ui/button";
-
-// Ícones condicionais para fontes de leads
-export const getSourceIcon = (source: Lead['source']) => {
-    const icons = {
-        'Web': <AlertCircle className="w-4 h-4" />,
-        'Indicação': <Users className="w-4 h-4" />,
-        'Feira': <Building2 className="w-4 h-4" />
-    };
-    return icons[source];
-};
 
 export default function DashboardTables() {
 
@@ -70,13 +60,12 @@ export default function DashboardTables() {
     const filteredLeads = useMemo(() => {
         let filtered = [...leads];
 
-        // Search filter
+        // Search filter - only name and company as per requirements
         if (filters.search) {
             const searchTerm = filters.search.toLowerCase();
             filtered = filtered.filter(lead =>
                 lead.name.toLowerCase().includes(searchTerm) ||
-                lead.company.toLowerCase().includes(searchTerm) ||
-                lead.email.toLowerCase().includes(searchTerm)
+                lead.company.toLowerCase().includes(searchTerm)
             );
         }
 
@@ -136,9 +125,9 @@ export default function DashboardTables() {
     // Stats calculations
     const stats = useMemo(() => {
         const totalLeads = leads.length;
-        const qualifiedLeads = leads.filter(lead => lead.status === 'Qualificado').length;
+        const qualifiedLeads = leads.filter(lead => lead.status === 'Qualified').length;
         const totalOpportunities = opportunities.length;
-        const totalOpportunityValue = opportunities.reduce((sum, opp) => sum + opp.amount, 0);
+        const totalOpportunityValue = opportunities.reduce((sum, opp) => (sum + (opp.amount || 0)), 0);
         const averageLeadScore = leads.length > 0
             ? Math.round(leads.reduce((sum, lead) => sum + lead.score, 0) / leads.length)
             : 0;
@@ -158,6 +147,12 @@ export default function DashboardTables() {
         setIsPanelOpen(true);
     };
 
+    const handleCloseDetail = () => {
+        setSelectedLead(null);
+        setIsPanelOpen(false);
+    }
+
+
     const handleLeadSave = (updatedLead: Lead) => {
         setLeads(prev => prev.map(lead =>
             lead.id === updatedLead.id ? updatedLead : lead
@@ -167,10 +162,8 @@ export default function DashboardTables() {
 
     const handleConvertToOpportunity = (opportunity: Opportunity) => {
         setOpportunities(prev => [...prev, opportunity]);
-
-        // Update lead status to indicate conversion
         if (selectedLead) {
-            const updatedLead = { ...selectedLead, status: 'Qualificado' as Lead['status'] };
+            const updatedLead = { ...selectedLead, status: 'Qualified' as Lead['status'] };
             setLeads(prev => prev.map(lead =>
                 lead.id === updatedLead.id ? updatedLead : lead
             ));
@@ -201,13 +194,12 @@ export default function DashboardTables() {
                                 <span>Oportunidades</span>
                             </TabsTrigger>
                         </TabsList>
-                        
+
                         <Button className="w-full sm:w-auto gap-1 h-10" onClick={handleNewLead}>
                             <Plus className="w-4 h-4" />
                             <span className="inline">Novo Lead</span>
                         </Button>
                     </div>
-
 
                     <TabsContent value="leads" className="space-y-6">
                         <div className="flex items-center justify-between">
@@ -248,13 +240,13 @@ export default function DashboardTables() {
                 </Tabs>
             </motion.div>
 
-            <LeadDetailPanel
+            {selectedLead && isPanelOpen && <LeadDetailPanel
                 lead={selectedLead}
                 isOpen={isPanelOpen}
-                onClose={() => setIsPanelOpen(false)}
+                onClose={handleCloseDetail}
                 onSave={handleLeadSave}
                 onConvertToOpportunity={handleConvertToOpportunity}
-            />
+            />}
         </div>
     );
 }

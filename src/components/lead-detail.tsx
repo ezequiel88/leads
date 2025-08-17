@@ -1,32 +1,32 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Save, ArrowRight, Mail, Building2, Trophy, Tag, Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Save, ArrowRight, Mail, Building2, Trophy, Tag, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn, getStatusColor, getScoreColor } from '@/lib/utils';
 import type { Lead, Opportunity } from '@/types';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { Separator } from '@radix-ui/react-select';
 
-// Schema de validação com Zod
-const leadValidationSchema = z.object({
-    email: z.email('Email deve ter um formato válido'),
-    company: z.string().min(1, 'Empresa é obrigatória'),
-    status: z.enum(['Novo', 'Em contato', 'Qualificado', 'Desqualificado']),
-    source: z.enum(['Web', 'Indicação', 'Feira']),
-    score: z.number().min(0, 'Score deve ser maior que 0').max(100, 'Score deve ser menor que 100')
+// Validation schema with Zod
+const leadFormSchema = z.object({
+    email: z.email('Email must have a valid format'),
+    status: z.enum(['New', 'Contacted', 'Qualified', 'Disqualified']),
 });
 
-type ValidationErrors = {
-    [K in keyof z.infer<typeof leadValidationSchema>]?: string;
-};
+type LeadFormValues = z.infer<typeof leadFormSchema>;
 
-interface LeadDetailPanelProps {
-    lead: Lead | null;
+type LeadDetailPanelProps = {
+    lead: Lead;
     isOpen: boolean;
+    isCreating?: boolean;
     onClose: () => void;
     onSave: (lead: Lead) => void;
     onConvertToOpportunity: (opportunity: Opportunity) => void;
@@ -40,300 +40,224 @@ export default function LeadDetailPanel({
     onConvertToOpportunity
 }: LeadDetailPanelProps) {
 
-    const [editedLead, setEditedLead] = useState<Lead | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isConverting, setIsConverting] = useState(false);
-    const [opportunityAmount, setOpportunityAmount] = useState<number>(0);
-    const [opportunityStage, setOpportunityStage] = useState<Opportunity['stage']>('Qualificação');
-    const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+    const form = useForm<LeadFormValues>({
+        resolver: zodResolver(leadFormSchema)
+    });
+
+    const { handleSubmit, reset, formState: { isSubmitting }, watch } = form;
+    const watchedValues = watch();
 
     useEffect(() => {
         if (lead) {
-            setEditedLead({ ...lead });
-            setValidationErrors({});
-        }
-    }, [lead]);
-
-    const validateLead = (leadData: Lead): boolean => {
-        try {
-            leadValidationSchema.parse(leadData);
-            setValidationErrors({});
-            return true;
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                const errors: ValidationErrors = {};
-                error.issues.forEach((err) => {
-                    if (err.path.length > 0) {
-                        const field = err.path[0] as keyof ValidationErrors;
-                        errors[field] = err.message;
-                    }
-                });
-                setValidationErrors(errors);
-            }
-            return false;
-        }
-    };
-
-    const handleSave = async () => {
-        if (!editedLead) return;
-
-        if (!validateLead(editedLead)) {
-            toast('Dados inválidos', {
-                description: 'Por favor, corrija os erros antes de salvar.'
+            reset({
+                email: lead.email,
+                status: lead.status
             });
-            return;
         }
+    }, [lead, reset]);
 
-        setIsLoading(true);
-
+    const onSubmit: SubmitHandler<LeadFormValues> = async (values) => {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        onSave(editedLead);
-        setIsLoading(false);
+        const leadData: Lead = {
+            ...lead,
+            email: values.email,
+            status: values.status
+        };
 
-        toast('Lead atualizado', {
-            description: 'As informações do lead foram salvas com sucesso.'
+        onSave(leadData);
+
+        toast('Lead updated', {
+            description: 'Lead information was saved successfully.'
         });
 
         onClose();
     };
 
     const handleConvert = async () => {
-        if (!editedLead) return;
-
-        setIsConverting(true);
+        if (!lead) return;
 
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         const newOpportunity: Opportunity = {
-            id: Date.now(), // Simple ID generation for demo
-            name: editedLead.name,
-            stage: opportunityStage,
-            amount: opportunityAmount,
-            accountName: editedLead.company
+            id: Date.now(),
+            name: lead.name,
+            stage: 'Qualification',
+            amount: 0,
+            accountName: lead.company
         };
 
         onConvertToOpportunity(newOpportunity);
-        setIsConverting(false);
 
-        toast('Lead convertido', {
-            description: `${editedLead.name} foi convertido em uma oportunidade.`
+        toast('Lead converted', {
+            description: `${lead.name} was converted to an opportunity.`
         });
 
         onClose();
     };
 
-    return (
-        <AnimatePresence>
-            {isOpen && editedLead && (
-                <>
-                    {/* Backdrop */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-foreground/50 backdrop-blur-sm z-40"
-                        onClick={onClose}
-                    />
+    const currentLead = lead || {
+        email: watchedValues.email,
+        status: watchedValues.status
+    };
 
-                    {/* Panel */}
-                    <motion.div
-                        initial={{ x: '100%' }}
-                        animate={{ x: 0 }}
-                        exit={{ x: '100%' }}
-                        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                        className="fixed top-0 right-0 h-full w-full max-w-md bg-card border-l shadow-strong z-50 overflow-hidden"
-                    >
-                        <div className="flex flex-col h-full">
-                            {/* Header */}
-                            <div className="flex items-center justify-between p-6 border-b bg-muted/30">
-                                <div className="flex items-center space-x-3">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getStatusColor(editedLead.status)}`}>
-                                        <span className="text-sm font-medium">
-                                            {editedLead.name.charAt(0)}
+    return (
+        <Sheet open={isOpen} onOpenChange={onClose}>
+            <SheetContent className="w-full max-w-md overflow-x-hidden overflow-y-auto">
+                <SheetHeader className="pb-6">
+                    <div className="flex items-center space-x-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getStatusColor(currentLead.status)}`}>
+                            <span className="text-sm font-medium">
+                                {currentLead.name.charAt(0)}
+                            </span>
+                        </div>
+                        <div>
+                            <SheetTitle className="text-lg font-semibold">
+                                {currentLead.name}
+                            </SheetTitle>
+                            <SheetDescription>
+                                {currentLead.company}
+                            </SheetDescription>
+                        </div>
+                    </div>
+                </SheetHeader>
+
+                <Form {...form}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="flex flex-col gap-6">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between px-6">
+                                    <h3 className="text-sm font-medium text-foreground">Lead Information</h3>
+                                    <div className="flex items-center space-x-2">
+                                        <Trophy className="w-4 h-4 text-muted-foreground" />
+                                        <span className={cn('text-sm font-medium', getScoreColor(currentLead.score))}>
+                                            Score: {currentLead.score}
                                         </span>
                                     </div>
-                                    <div>
-                                        <h2 className="text-lg font-semibold text-foreground">{editedLead.name}</h2>
-                                        <p className="text-sm text-muted-foreground">{editedLead.company}</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 px-6">
+                                    <div className='flex flex-col gap-2'>
+                                        <Label className="text-sm text-muted-foreground">Source</Label>
+                                        <div className="flex items-center space-x-2 mt-1">
+                                            <Building2 className="w-4 h-4 text-muted-foreground" />
+                                            <span className="text-sm text-foreground">{currentLead.source}</span>
+                                        </div>
+                                    </div>
+                                    <div className='flex flex-col gap-2'>
+                                        <Label className="text-sm text-muted-foreground">Status</Label>
+                                        <Badge className={cn('border mt-1', getStatusColor(currentLead.status))}>
+                                            {currentLead.status}
+                                        </Badge>
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="sm" onClick={onClose}>
-                                    <X className="w-4 h-4" />
+                            </div>
+
+                            <SelectSeparator />
+
+                            {/* Editable Fields */}
+                            <div className="space-y-4 px-6">
+                                <h3 className="text-sm font-medium text-foreground">
+                                    Edit Information
+                                </h3>
+
+                                <div className="space-y-4">
+                                    {/* Email */}
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <FormControl>
+                                                    <div className="relative">
+                                                        <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                                                        <Input
+                                                            type="email"
+                                                            placeholder="email@company.com"
+                                                            className="pl-10"
+                                                            {...field}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {/* Status */}
+                                        <FormField
+                                            control={form.control}
+                                            name="status"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Status</FormLabel>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <FormControl>
+                                                            <SelectTrigger className="w-full">
+                                                                <div className="flex items-center space-x-2">
+                                                                    <Tag className="w-4 h-4 text-muted-foreground" />
+                                                                    <SelectValue placeholder="Select a status" />
+                                                                </div>
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            <SelectItem value="New">New</SelectItem>
+                                                            <SelectItem value="Contacted">Contacted</SelectItem>
+                                                            <SelectItem value="Qualified">Qualified</SelectItem>
+                                                            <SelectItem value="Disqualified">Disqualified</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <SelectSeparator />
+
+                            <div className="space-y-4 px-6">
+                                <h3 className="text-sm font-medium text-foreground">Convert to Opportunity</h3>
+                                <Button
+                                    type="button"
+                                    onClick={handleConvert}
+                                    className="w-full"
+                                    variant="default"
+                                >
+                                    <ArrowRight className="w-4 h-4 mr-2" />
+                                    Convert Lead
                                 </Button>
                             </div>
 
-                            {/* Content */}
-                            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                                {/* Lead Info */}
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-sm font-medium text-foreground">Informações do Lead</h3>
-                                        <div className="flex items-center space-x-2">
-                                            <Trophy className="w-4 h-4 text-muted-foreground" />
-                                            <span className={cn('text-sm font-medium', getScoreColor(editedLead.score))}>
-                                                Score: {editedLead.score}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className='flex flex-col gap-2'>
-                                            <Label htmlFor="source" className="text-sm text-muted-foreground">Fonte</Label>
-                                            <div className="flex items-center space-x-2 mt-1">
-                                                <Building2 className="w-4 h-4 text-muted-foreground" />
-                                                <span className="text-sm text-foreground">{editedLead.source}</span>
-                                            </div>
-                                        </div>
-                                        <div className='flex flex-col gap-2'>
-                                            <Label htmlFor="status" className="text-sm text-muted-foreground">Status</Label>
-                                            <Badge className={cn('border mt-1', getStatusColor(editedLead.status))}>
-                                                {editedLead.status}
-                                            </Badge>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <SelectSeparator className='my-4' />
-
-                                {/* Editable Fields */}
-                                <div className="space-y-4">
-                                    <h3 className="text-sm font-medium text-foreground">Editar Informações</h3>
-
-                                    <div className="space-y-3">
-                                        <div className='flex flex-col gap-2'>
-                                            <Label htmlFor="email">Email</Label>
-                                            <div className="relative">
-                                                <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                                                <Input
-                                                    id="email"
-                                                    type="email"
-                                                    value={editedLead.email}
-                                                    onChange={(e) => setEditedLead({ ...editedLead, email: e.target.value })}
-                                                    className={cn(
-                                                        "pl-10",
-                                                        validationErrors.email && "border-destructive focus:border-destructive"
-                                                    )}
-                                                    placeholder="email@empresa.com"
-                                                />
-                                            </div>
-                                            {validationErrors.email && (
-                                                <p className="text-sm text-destructive">{validationErrors.email}</p>
-                                            )}
-                                        </div>
-
-                                        <div className='flex flex-col gap-2'>
-                                            <Label htmlFor="status">Status</Label>
-                                            <Select
-                                                value={editedLead.status}
-                                                onValueChange={(value: Lead['status']) =>
-                                                    setEditedLead({ ...editedLead, status: value })
-                                                }
-                                            >
-                                                <SelectTrigger className={cn(
-                                                    validationErrors.status && "border-destructive focus:border-destructive"
-                                                )}>
-                                                    <div className="flex items-center space-x-2">
-                                                        <Tag className="w-4 h-4 text-muted-foreground" />
-                                                        <SelectValue />
-                                                    </div>
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="Novo">Novo</SelectItem>
-                                                    <SelectItem value="Em contato">Em contato</SelectItem>
-                                                    <SelectItem value="Qualificado">Qualificado</SelectItem>
-                                                    <SelectItem value="Desqualificado">Desqualificado</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            {validationErrors.status && (
-                                                <p className="text-sm text-destructive">{validationErrors.status}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Convert to Opportunity */}
-                                {editedLead.status === 'Qualificado' && (
-                                    <div className="space-y-4 pt-4 border-t">
-                                        <h3 className="text-sm font-medium text-foreground">Converter para Oportunidade</h3>
-
-                                        <div className="space-y-3">
-                                            <div>
-                                                <Label htmlFor="opportunity-stage">Estágio da Oportunidade</Label>
-                                                <Select value={opportunityStage} onValueChange={(value: Opportunity['stage']) => setOpportunityStage(value)}>
-                                                    <SelectTrigger>
-                                                        <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="Qualificação">Qualificação</SelectItem>
-                                                        <SelectItem value="Proposta">Proposta</SelectItem>
-                                                        <SelectItem value="Negociação">Negociação</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-
-                                            <div>
-                                                <Label htmlFor="opportunity-amount">Valor Estimado (R$)</Label>
-                                                <Input
-                                                    id="opportunity-amount"
-                                                    type="number"
-                                                    value={opportunityAmount}
-                                                    onChange={(e) => setOpportunityAmount(Number(e.target.value))}
-                                                    placeholder="0"
-                                                    min="0"
-                                                />
-                                            </div>
-
-                                            <Button
-                                                onClick={handleConvert}
-                                                disabled={isConverting}
-                                                className="w-full"
-                                                variant="default"
-                                            >
-                                                {isConverting ? (
-                                                    <>
-                                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                        Convertendo...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <ArrowRight className="w-4 h-4 mr-2" />
-                                                        Converter Lead
-                                                    </>
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                            <SelectSeparator />
 
                             {/* Footer */}
-                            <div className="p-6 border-t bg-muted/30">
-                                <div className="flex space-x-3">
-                                    <Button variant="outline" onClick={onClose} className="flex-1">
-                                        Cancelar
-                                    </Button>
-                                    <Button onClick={handleSave} disabled={isLoading} className="flex-1">
-                                        {isLoading ? (
-                                            <>
-                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                Salvando...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Save className="w-4 h-4 mr-2" />
-                                                Salvar
-                                            </>
-                                        )}
-                                    </Button>
-                                </div>
+                            <div className="flex items-center gap-4 px-6">
+                                <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+                                    Cancel
+                                </Button>
+                                <Button type="submit" disabled={isSubmitting} className="flex-1">
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            <span>Saving...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save className="w-4 h-4 mr-2" />
+                                            <span>Save</span>
+                                        </>
+                                    )}
+                                </Button>
                             </div>
                         </div>
-                    </motion.div>
-                </>
-            )}
-        </AnimatePresence>
+                    </form>
+                </Form>
+            </SheetContent>
+        </Sheet>
     );
 };

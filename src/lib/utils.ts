@@ -15,7 +15,7 @@ export const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-// Conditional colors for lead status
+// Updated status colors for new values
 export const getStatusColor = (status: Lead['status']) => {
   const colors = {
     'New': 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
@@ -26,21 +26,21 @@ export const getStatusColor = (status: Lead['status']) => {
   return colors[status];
 };
 
+// Updated source icons
+export const getSourceIcon = (source: Lead['source']) => {
+  const icons = {
+    'Web': 'Globe',
+    'Referral': 'Users', 
+    'Event': 'Building2'
+  };
+  return icons[source];
+};
+
 // Conditional colors for scores
 export const getScoreColor = (score: number) => {
   if (score >= 90) return 'text-green-600 dark:text-green-400';
   if (score >= 75) return 'text-yellow-600 dark:text-yellow-400';
   return 'text-gray-500 dark:text-gray-400';
-};
-
-// Conditional icons for lead sources
-export const getSourceIcon = (source: Lead['source']) => {
-  const icons = {
-    'Web': 'Globe',
-    'Referral': 'Users',
-    'Event': 'Building2'
-  };
-  return icons[source];
 };
 
 // Conditional colors for opportunity stages

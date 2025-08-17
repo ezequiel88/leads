@@ -1,4 +1,4 @@
 [
-  { "id": 1, "name": "Alice Silva", "stage": "Proposta", "amount": 15000, "accountName": "TechNova" },
-  { "id": 2, "name": "Bruno Costa", "stage": "Negociação", "amount": 22000, "accountName": "AgroMais" }
+  { "id": 1, "name": "Alice Silva", "stage": "Proposal", "amount": 15000, "accountName": "TechNova" },
+  { "id": 2, "name": "Bruno Costa", "stage": "Negotiation", "amount": 22000, "accountName": "AgroMais" }
 ]

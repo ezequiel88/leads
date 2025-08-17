@@ -27,7 +27,7 @@ export function ThemeSwitch() {
     >
       {/* Ícones fixos nas bordas */}
       <Sun className="h-5 w-5 text-yellow-400" />
-      <Moon className="h-5 w-5 text-blue-400" />
+      <Moon className="h-5 w-5 text-gray-700" />
 
       {/* Alavanca com animação */}
       <motion.div
@@ -47,7 +47,7 @@ export function ThemeSwitch() {
               exit={{ opacity: 0, scale: 0.5 }}
               transition={{ duration: 0.3 }}
             >
-              <Moon className="h-4 w-4 text-primary" />
+              <Moon className="h-4 w-4 text-gray-700" />
             </motion.div>
           ) : (
             <motion.div
