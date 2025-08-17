@@ -6,21 +6,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import type { Lead, Opportunity, TableFilters, PaginationState } from "@/types";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 
-import leadsData from '@/@data/leads.json';
-import opportunitiesData from '@/@data/oportunities.json';
 import SearchAndFilters from "./search-filters";
 import LeadsTable from "./leads-table";
 import OpportunitiesTable from "./oportunities-table";
 import LeadDetailPanel from "./lead-detail";
+import { useLeads } from "@/contexts/LeadsContext";
 
 export default function DashboardTables() {
-
-    const [leads, setLeads] = useState<Lead[]>([]);
-    const [opportunities, setOpportunities] = useLocalStorage<Opportunity[]>('opportunities', opportunitiesData as Opportunity[]);
+    const { leads, opportunities, isLoading, updateLead, convertLeadToOpportunity } = useLeads();
     const [activeTab, setActiveTab] = useState('leads');
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const [isPanelOpen, setIsPanelOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
     // Estados de paginação
     const [leadsPagination, setLeadsPagination] = useState<PaginationState>({
@@ -43,22 +39,10 @@ export default function DashboardTables() {
         sortOrder: 'desc'
     });
 
-    // Simulate initial data loading
-    useEffect(() => {
-        const loadData = async () => {
-            setIsLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            setLeads(leadsData as Lead[]);
-            setIsLoading(false);
-        };
-
-        loadData();
-    }, []);
-
     // Filter and sort leads
     const filteredLeads = useMemo(() => {
         let filtered = [...leads];
-        
+
         // Search filter - name, email and company
         if (filters.search) {
             const searchTerm = filters.search.toLowerCase();
@@ -118,26 +102,6 @@ export default function DashboardTables() {
         }));
     }, [opportunities]);
 
-    // Stats calculations
-    const stats = useMemo(() => {
-        const totalLeads = leads.length;
-        const qualifiedLeads = leads.filter(lead => lead.status === 'Qualified').length;
-        const totalOpportunities = opportunities.length;
-        const totalOpportunityValue = opportunities.reduce((sum, opp) => (sum + (opp.amount || 0)), 0);
-        const averageLeadScore = leads.length > 0
-            ? Math.round(leads.reduce((sum, lead) => sum + lead.score, 0) / leads.length)
-            : 0;
-
-        return {
-            totalLeads,
-            qualifiedLeads,
-            totalOpportunities,
-            totalOpportunityValue,
-            averageLeadScore,
-            conversionRate: totalLeads > 0 ? Math.round((qualifiedLeads / totalLeads) * 100) : 0
-        };
-    }, [leads, opportunities]);
-
     const handleLeadSelect = (lead: Lead) => {
         setSelectedLead(lead);
         setIsPanelOpen(true);
@@ -148,21 +112,14 @@ export default function DashboardTables() {
         setIsPanelOpen(false);
     }
 
-
-    const handleLeadSave = (updatedLead: Lead) => {
-        setLeads(prev => prev.map(lead =>
-            lead.id === updatedLead.id ? updatedLead : lead
-        ));
-        setSelectedLead(updatedLead);
+    const handleLeadSave = (lead: Lead) => {
+        updateLead(lead);
     };
 
     const handleConvertToOpportunity = (opportunity: Opportunity) => {
-        setOpportunities(prev => [...prev, opportunity]);
         if (selectedLead) {
-            const updatedLead = { ...selectedLead, status: 'Qualified' as Lead['status'] };
-            setLeads(prev => prev.map(lead =>
-                lead.id === updatedLead.id ? updatedLead : lead
-            ));
+            convertLeadToOpportunity(selectedLead.id, opportunity);
+            updateLead({ ...selectedLead, status: 'Qualified' as Lead['status'] });
         }
     };
 
@@ -190,7 +147,7 @@ export default function DashboardTables() {
                             <div>
                                 <h3 className="text-lg font-semibold">Leads</h3>
                                 <p className="text-muted-foreground">
-                                    {filteredLeads.length} leads • {stats.qualifiedLeads} qualified
+                                    {filteredLeads.length} leads • {leads.filter(lead => lead.status === 'Qualified').length} qualified
                                 </p>
                             </div>
                         </div>
@@ -210,7 +167,7 @@ export default function DashboardTables() {
                             <div>
                                 <h3 className="text-lg font-semibold">Opportunities</h3>
                                 <p className="text-muted-foreground">
-                                    {opportunities.length} opportunities • {formatCurrency(stats.totalOpportunityValue)} total
+                                    {opportunities.length} opportunities • {formatCurrency(opportunities.reduce((acc, opp) => acc + (opp.amount || 0), 0))} total
                                 </p>
                             </div>
                         </div>
