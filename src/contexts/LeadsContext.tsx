@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { Lead, Opportunity, TableFilters, PaginationState } from '@/types';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { Lead, Opportunity } from '@/types';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import leadsData from '@/@data/leads.json';
 import opportunitiesData from '@/@data/oportunities.json';

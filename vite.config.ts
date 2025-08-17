@@ -1,13 +1,12 @@
 import { defineConfig } from 'vite'
-import viteReact from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react'
 import tanstackRouter from '@tanstack/router-plugin/vite'
-import { resolve } from 'node:path'
+import path from 'path'
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     tanstackRouter({ autoCodeSplitting: true }),
-    viteReact()
+    react()
   ],
   test: {
     globals: true,
@@ -16,13 +15,21 @@ export default defineConfig({
     css: true,
   },
   build: {
-    outDir: 'dist',
-    sourcemap: false,
-    minify: 'esbuild'
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'router-vendor': ['@tanstack/react-router'],
+          'ui-vendor': ['lucide-react', 'class-variance-authority'],
+          'utils': ['clsx', 'tailwind-merge']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
+      '@': path.resolve(process.cwd(), './src'),
     },
   },
 })
