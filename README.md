@@ -2,6 +2,12 @@
 
 > A lightweight, modern React application for triaging leads and converting them into opportunities. Built with love, caffeine, and a healthy dose of TypeScript magic! ☕
 
+## 🌐 Live Demo
+
+**🎯 [Access the live demo](https://leads-ivory.vercel.app)**
+
+> Deployed on Vercel with automatic CI/CD from GitHub
+
 ## 🎯 What's This All About?
 
 This is a **Mini Seller Console** that helps sales teams manage their leads like pros. Think of it as your sales pipeline's best friend - it takes messy lead data and turns it into organized, actionable opportunities. No more spreadsheet nightmares!
