@@ -95,7 +95,7 @@ pnpm test     # Run tests
 
 ## 📁 Project Structure
 
-``
+```
 src/
 ├── @data/             # JSON data files (leads & opportunities)
 ├── components/        # Reusable UI components
@@ -109,7 +109,7 @@ src/
 ├── routes/            # TanStack Router routes
 ├── types/             # TypeScript type definitions
 └── styles.css         # Global styles
-``
+```
 
 ## 🎨 Features Deep Dive
 
