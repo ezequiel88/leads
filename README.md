@@ -71,7 +71,7 @@ We've implemented a comprehensive testing suite to ensure code quality and relia
 
 ```
 tests /
-├── mocks /           # Mock data for tests
+├── mocks /              # Mock data for tests
 │   └── data.ts          # Sample leads and opportunities
 ├── components/          # Component tests
 │   └── DashboardCards.test.tsx
