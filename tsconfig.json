@@ -33,7 +33,8 @@
   },
   "include": [
     "src",
-    "__tests__"
+    "__tests__",
+    "vite-env.d.ts"
   ],
   "references": [
     {

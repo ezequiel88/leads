@@ -1,8 +1,15 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanstackDevtools } from '@tanstack/react-devtools'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
+
+// Importações condicionais para devtools (apenas em desenvolvimento)
+const TanStackRouterDevtoolsPanel = import.meta.env.DEV
+  ? await import('@tanstack/react-router-devtools').then(d => d.TanStackRouterDevtoolsPanel)
+  : () => null
+
+const TanstackDevtools = import.meta.env.DEV
+  ? await import('@tanstack/react-devtools').then(d => d.TanstackDevtools)
+  : () => null
 
 export const Route = createRootRoute({
   head: () => ({
@@ -22,17 +29,19 @@ export const Route = createRootRoute({
         position="top-center"
         duration={4000}
       />
-      <TanstackDevtools
-        config={{
-          position: 'bottom-left',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-        ]}
-      />
+      {import.meta.env.DEV && (
+        <TanstackDevtools
+          config={{
+            position: 'bottom-left',
+          }}
+          plugins={[
+            {
+              name: 'Tanstack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
+        />
+      )}
     </ThemeProvider>
   ),
 })
