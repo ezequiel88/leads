@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { Button } from './button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import { Button } from './ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { cn } from '@/lib/utils';
 import type { PaginationProps } from '@/types';
 
@@ -50,14 +50,14 @@ export default function Pagination({
 
             <div className="flex items-center space-x-2">
                 <p className="text-sm text-muted-foreground">
-                    Mostrando {startItem} a {endItem} de {totalItems} registros
+                    Showing {startItem} to {endItem} of {totalItems} entries
                 </p>
             </div>
 
             <div className="flex flex-col md:flex-row items-center space-x-6 gap-4">
 
                 <div className="flex items-center space-x-2">
-                    <p className="text-sm font-medium">Registros por página</p>
+                    <p className="text-sm font-medium">Rows per page</p>
                     <Select
                         value={pageSize.toString()}
                         onValueChange={(value) => onPageSizeChange(Number(value))}

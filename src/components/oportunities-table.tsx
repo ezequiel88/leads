@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { DollarSign, Building2, Target } from 'lucide-react';
+import { Building2, Target } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import Pagination from '@/components/ui/pagination';
+import Pagination from '@/components/pagination';
 import { cn, formatCurrency, getStageColor } from '@/lib/utils';
 import type { Opportunity, PaginationState } from '@/types';
 
@@ -55,11 +55,8 @@ export default function OpportunitiesTable({
                     </TableHeader>
                     <TableBody>
                         {[...Array(3)].map((_, i) => (
-                            <TableRow key={i}>
-                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-10 bg-muted animate-pulse rounded"></div></TableCell>
+                            <TableRow key={i} className="bg-muted animate-pulse">
+                                <TableCell colSpan={4}><div className="h-12"></div></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -133,10 +130,8 @@ export default function OpportunitiesTable({
                             </TableCell>
                             <TableCell className="px-6 py-4">
                                 <div className="flex items-center space-x-2">
-                                    <DollarSign className="w-4 h-4 text-success" />
                                     <span className="text-sm font-medium text-success">
                                         {formatCurrency(opportunity.amount || 0)}
-
                                     </span>
                                 </div>
                             </TableCell>

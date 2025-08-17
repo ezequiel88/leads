@@ -104,7 +104,7 @@ export default function LeadDetailPanel({
 
     return (
         <Sheet open={isOpen} onOpenChange={onClose}>
-            <SheetContent className="w-full max-w-md overflow-x-hidden overflow-y-auto">
+            <SheetContent className=" overflow-x-hidden overflow-y-auto">
                 <SheetHeader className="pb-6">
                     <div className="flex items-center space-x-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getStatusColor(currentLead.status)}`}>

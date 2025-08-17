@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Users, Mail, Building2, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import Pagination from '@/components/ui/pagination';
+import Pagination from '@/components/pagination';
 import { cn, getStatusColor, getScoreColor, getSourceIcon } from '@/lib/utils';
 import type { Lead, PaginationState } from '@/types';
 
@@ -61,13 +61,8 @@ export default function LeadsTable({
                     </TableHeader>
                     <TableBody>
                         {[...Array(5)].map((_, i) => (
-                            <TableRow key={i}>
-                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
-                                <TableCell><div className="h-16 bg-muted animate-pulse rounded"></div></TableCell>
+                            <TableRow key={i} className="bg-muted animate-pulse">
+                                <TableCell colSpan={6}><div className="h-12"></div></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -83,9 +78,9 @@ export default function LeadsTable({
                     <div className="rounded-full bg-muted/20 p-4 mb-4">
                         <Users className="w-8 h-8 text-muted-foreground" />
                     </div>
-                    <h3 className="text-lg font-medium text-foreground mb-2">Nenhum lead encontrado</h3>
+                    <h3 className="text-lg font-medium text-foreground mb-2">No leads found</h3>
                     <p className="text-muted-foreground text-center max-w-sm">
-                        Não foram encontrados leads que correspondam aos filtros aplicados.
+                        No leads were found that match the applied filters.
                     </p>
                 </div>
             </div>
@@ -97,12 +92,12 @@ export default function LeadsTable({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="px-6 py-4">Lead</TableHead>
-                        <TableHead className="px-6 py-4">Empresa</TableHead>
-                        <TableHead className="px-6 py-4">Email</TableHead>
-                        <TableHead className="px-6 py-4">Fonte</TableHead>
-                        <TableHead className="px-6 py-4">Score</TableHead>
-                        <TableHead className="px-6 py-4">Status</TableHead>
+                        <TableHead>Lead</TableHead>
+                        <TableHead>Company</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Source</TableHead>
+                        <TableHead>Score</TableHead>
+                        <TableHead>Status</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
