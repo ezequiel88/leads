@@ -149,7 +149,7 @@ No backend means faster development and easier demo deployment. Plus, it simulat
 ✅ **Leads List**: Load from local JSON with all required fields
 
 ✅ **Search & Filter**: Name/company search, status filter, score sorting
- 
+
 ✅ **Lead Detail Panel**: Slide-over with inline editing
 
 ✅ **Email Validation**: Proper email format validation
@@ -170,6 +170,7 @@ No backend means faster development and easier demo deployment. Plus, it simulat
 
 
 **Nice-to-Haves Implemented:**
+
 ✅ **localStorage Persistence**: Filters and sort preferences saved
 
 ✅ **Optimistic Updates**: Immediate UI updates with rollback
