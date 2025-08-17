@@ -87,7 +87,7 @@ tests /
 
 ### What We Test
 
-**🪝 Custom Hooks**
+**🧪 Custom Hooks**
 
 - **useLocalStorage**: Storage persistence, error handling, JSON parsing
 - **useMobile**: Responsive breakpoint detection, window resize handling
