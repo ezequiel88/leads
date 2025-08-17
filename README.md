@@ -95,7 +95,7 @@ pnpm test     # Run tests
 
 ## 📁 Project Structure
 
-```
+``
 src/
 ├── @data/             # JSON data files (leads & opportunities)
 ├── components/        # Reusable UI components
@@ -109,7 +109,7 @@ src/
 ├── routes/            # TanStack Router routes
 ├── types/             # TypeScript type definitions
 └── styles.css         # Global styles
-```
+``
 
 ## 🎨 Features Deep Dive
 
@@ -178,4 +178,3 @@ MIT License - because sharing is caring! 🎁
 ---
 
 *Built with ❤️ and way too much coffee by a developer who believes good UX is not optional.*
-```
