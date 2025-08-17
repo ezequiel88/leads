@@ -1,290 +1,181 @@
-Welcome to your new TanStack app! 
+# 🚀 Seller Console
 
-# Getting Started
+> A lightweight, modern React application for triaging leads and converting them into opportunities. Built with love, caffeine, and a healthy dose of TypeScript magic! ☕
 
-To run this application:
+## 🎯 What's This All About?
 
-```bash
-npm install
-npm run start
-```
+This is a **Mini Seller Console** that helps sales teams manage their leads like pros. Think of it as your sales pipeline's best friend - it takes messy lead data and turns it into organized, actionable opportunities. No more spreadsheet nightmares!
 
-# Building For Production
+### 🌟 The Cool Stuff We Built
 
-To build this application for production:
+**📋 Leads Management**
 
-```bash
-npm run build
-```
+- **Smart Lead List**: Loads 50 sample leads from local JSON (because who has time for real APIs during demos?)
+- **Search & Filter**: Find leads by name/company, filter by status, sort by score (descending, because high scores deserve attention!)
+- **Responsive Design**: Works on desktop and mobile - your sales team can hustle anywhere
 
-## Testing
+**🔍 Lead Detail Panel**
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+- **Slide-over Magic**: Click any lead row to open a smooth slide-over panel
+- **Inline Editing**: Edit status and email with real-time validation (we actually check if emails look like emails!)
+- **Save/Cancel Actions**: With proper error handling because nobody likes broken forms
 
-```bash
-npm run test
-```
+**💰 Lead to Opportunity Conversion**
 
-## Styling
+- **One-Click Convert**: Transform leads into opportunities with a single button click
+- **Smart Data Mapping**: Automatically creates opportunities with proper fields (id, name, stage, amount, accountName)
+- **Opportunities Table**: View all converted opportunities in a clean, organized table
 
-This project uses CSS for styling.
+**🎨 UX/UI States**
 
+- **Loading States**: Smooth skeleton loading with staggered animations
+- **Empty States**: Friendly messages when no data is found
+- **Error Handling**: Basic but effective error states
+- **Performance**: Handles 100+ leads without breaking a sweat
 
+## 🛠️ Tech Stack
 
+**Core Technologies:**
 
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
+- **React 19** with **TypeScript** - Because we like our code typed and our bugs caught early
+- **Vite** - Lightning-fast development server (seriously, it's fast!)
+- **Tailwind CSS** - Utility-first styling that doesn't make you cry
+- **TanStack Router** - Modern routing that actually makes sense
 
-### Adding A Route
+**UI & Animations:**
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
+- **Radix UI** - Accessible components that work out of the box
+- **Framer Motion** - Smooth animations that don't feel janky
+- **Lucide React** - Beautiful icons that don't look like they're from 2010
+- **Sonner** - Toast notifications that users actually notice
 
-TanStack will automatically generate the content of the route file for you.
+**State Management:**
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+- **React Context** - For global state management
+- **Local Storage** - Persistent filters and data (survives browser refreshes!)
+- **Custom Hooks** - Clean, reusable logic
 
-### Adding Links
+**Developer Experience:**
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+- **ESLint & TypeScript** - Code quality that doesn't compromise
+- **Vitest** - Testing framework that doesn't hate you
+- **PostCSS & Autoprefixer** - CSS that works everywhere
 
-```tsx
-import { Link } from "@tanstack/react-router";
-```
+## 🚀 Getting Started
 
-Then anywhere in your JSX you can use it like so:
+### Prerequisites
 
-```tsx
-<Link to="/about">About</Link>
-```
+- Node.js 18+ (because we live in the future)
+- pnpm (or npm/yarn if you're old school)
 
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-})
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
+### Installation
 
 ```bash
-npm install @tanstack/react-query @tanstack/react-query-devtools
+# Clone the repo
+git clone <repository-url>
+cd leads
+
+# Install dependencies (pnpm is faster, just saying)
+pnpm install
+
+# Start the development server
+pnpm dev
 ```
 
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
+The app will be running at `http://localhost:3000` - open it up and start managing those leads! 🎉
 
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
+### Available Scripts
 
 ```bash
-npm install @tanstack/store
+pnpm dev      # Start development server
+pnpm build    # Build for production
+pnpm serve    # Preview production build
+pnpm test     # Run tests
 ```
 
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
+## 📁 Project Structure
 
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
 ```
+src/
+├── @data/             # JSON data files (leads & opportunities)
+├── components/        # Reusable UI components
+│   ├── ui/            # Base UI components (buttons, tables, etc.)
+│   ├── leads-table.tsx
+│   ├── opportunities-table.tsx
+│   └── lead-detail.tsx
+├── contexts/          # React Context providers
+├── hooks/             # Custom React hooks
+├── lib/               # Utility functions
+├── routes/            # TanStack Router routes
+├── types/             # TypeScript type definitions
+└── styles.css         # Global styles
 
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
 
-Let's check this out by doubling the count using derived state.
+## 🎨 Features Deep Dive
 
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
+### Lead Management
+- **50 Sample Leads**: Pre-loaded with realistic Brazilian company data
+- **Real-time Search**: Instant filtering as you type
+- **Status Filtering**: Filter by New, Contacted, Qualified, or Disqualified
+- **Score Sorting**: Automatically sorted by score (highest first)
+- **Pagination**: Smooth pagination with customizable page sizes
 
-const countStore = new Store(0);
+### Data Persistence
+- **localStorage Integration**: Filters and sort preferences persist across sessions
+- **Optimistic Updates**: UI updates immediately, with rollback on errors
+- **Simulated Latency**: setTimeout used to simulate real API delays
 
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
+### Responsive Design
+- **Mobile-First**: Works beautifully on phones and tablets
+- **Desktop Enhanced**: Takes advantage of larger screens
+- **Touch Friendly**: Proper touch targets and gestures
 
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
+## 🔧 Technical Decisions
 
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
+**Why TanStack Router?**
+Because React Router is so 2022. TanStack Router gives us type-safe routing with better developer experience.
 
-export default App;
+**Why Radix UI?**
+Accessibility is not optional. Radix gives us WAI-ARIA compliant components without the headache.
+
+**Why Framer Motion?**
+Because smooth animations make users happy, and happy users convert better.
+
+**Why Local JSON?**
+No backend means faster development and easier demo deployment. Plus, it simulates real API responses with setTimeout.
+
+## 🎯 Challenge Requirements Met
+
+✅ **Leads List**: Load from local JSON with all required fields
+✅ **Search & Filter**: Name/company search, status filter, score sorting
+✅ **Lead Detail Panel**: Slide-over with inline editing
+✅ **Email Validation**: Proper email format validation
+✅ **Save/Cancel Actions**: With error handling
+✅ **Convert to Opportunity**: One-click conversion with proper data mapping
+✅ **Opportunities Table**: Clean display of converted opportunities
+✅ **Loading States**: Skeleton loading and smooth transitions
+✅ **Empty States**: Friendly no-data messages
+✅ **Error Handling**: Basic error states throughout
+✅ **Performance**: Handles 100+ leads smoothly
+
+**Nice-to-Haves Implemented:**
+✅ **localStorage Persistence**: Filters and sort preferences saved
+✅ **Optimistic Updates**: Immediate UI updates with rollback
+✅ **Responsive Layout**: Desktop to mobile responsive design
+
+## 🤝 Contributing
+
+Found a bug? Want to add a feature? PRs are welcome! Just make sure your code is:
+- Properly typed (TypeScript is your friend)
+- Tested (at least the happy path)
+- Accessible (screen readers matter)
+- Responsive (mobile users exist)
+
+## 📝 License
+
+MIT License - because sharing is caring! 🎁
+
+---
+
+*Built with ❤️ and way too much coffee by a developer who believes good UX is not optional.*
 ```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
