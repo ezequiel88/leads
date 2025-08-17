@@ -15,6 +15,11 @@ export default defineConfig({
     setupFiles: ['__tests__/setup.ts'],
     css: true,
   },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild'
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
