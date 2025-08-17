@@ -7,7 +7,7 @@ export default function Header() {
                 <div className="flex justify-between items-center py-4">
                     <div className="flex items-center gap-4">
                         <img src="/logo.png" alt="logo" className="h-8" />
-                        <h2 className="text-xl font-bold">Seller Console</h2>
+                        <h2 className="text-xl font-bold">Mini Seller Console</h2>
                     </div>
                     <ThemeSwitch />
                 </div>

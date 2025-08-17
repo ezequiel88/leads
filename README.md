@@ -1,4 +1,4 @@
-# 🚀 Seller Console
+# 🚀 Mini Seller Console
 
 > A lightweight, modern React application for triaging leads and converting them into opportunities. Built with love, caffeine, and a healthy dose of TypeScript magic! ☕
 
